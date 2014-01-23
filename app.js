@@ -39,15 +39,16 @@ passport.use(new local(
     // asynchronous verification, for effect...
     process.nextTick(function () {
       var validateUser = function (err, user) {
-        if (err) { return done(err); }
         if (!user) { return done(null, false, {message: 'Unknown user: ' + username})}
-
+        
         if (bcrypt.compareSync(password, user.password)) {
           return done(null, user);
-        }
-        else {
+        } else {
           return done(null, false, {message: 'Invalid username or password'});
         }
+        
+        //handle uncaught error
+        if (err) { return done(err); }
       };
 
       db.findUserByEmail(username, validateUser);
